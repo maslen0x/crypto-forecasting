@@ -1,7 +1,7 @@
 import { LineChartData, OhlcChartData } from "../types/chart";
 import { HistoricalChartItem } from "../types/crypto";
 import { addDays } from "./date";
-import { getRandomArray } from "./random";
+import Arima from "arima";
 
 export const formatOhlcChartData = (data: HistoricalChartItem[]) => {
   return data.map<OhlcChartData[number]>((item) => ({
@@ -18,17 +18,18 @@ export const getLineChartData = (ohlcData: OhlcChartData) => {
     y: null,
   }));
 
-  const randomNumbers = getRandomArray(initialData.length, 60000, 80000);
+  const arima = new Arima({ verbose: false });
+  arima.train(ohlcData.map((item) => item.y[3]));
+  const count = Math.round(ohlcData.length / 3);
+  const [forecast] = arima.predict(count);
 
-  randomNumbers.forEach((number) => {
+  forecast.forEach((number) => {
     const lastOhlcItem = initialData[initialData.length - 1];
     initialData.push({
       x: addDays(lastOhlcItem.x, 1),
-      y: number,
+      y: Math.round(number),
     });
   });
-
-  initialData[ohlcData.length].y = ohlcData[ohlcData.length - 1].y[3];
 
   return initialData;
 };

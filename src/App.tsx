@@ -4,9 +4,17 @@ import { useOhlcData } from "./hooks/ohlc-data";
 import { getLineChartData } from "./utils/chart";
 
 const App: FC = () => {
-  const ohlcData = useOhlcData();
+  const { ohlcData, loading, error } = useOhlcData();
 
   const lineData = useMemo(() => getLineChartData(ohlcData), [ohlcData]);
+
+  if (error) {
+    return "Ошибка при загрузке данных";
+  }
+
+  if (loading) {
+    return "Загрузка";
+  }
 
   return (
     <div style={{ display: "flex", justifyContent: "center" }}>

@@ -33,14 +33,14 @@ const OhlcChart: FC<OhlcChartProps> = ({ lineData, ohlcData }) => {
       options={options}
       series={[
         {
-          name: "line",
-          type: "line",
-          data: lineData,
-        },
-        {
           name: "ohlc",
           type: "candlestick",
           data: ohlcData,
+        },
+        {
+          name: "line",
+          type: "line",
+          data: lineData,
         },
       ]}
       type="candlestick"

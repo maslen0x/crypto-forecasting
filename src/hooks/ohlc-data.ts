@@ -5,22 +5,30 @@ import { getHistoricalChart } from "../api/crypto";
 
 export const useOhlcData = () => {
   const [ohlcData, setOhlcData] = useState<OhlcChartData>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(false);
 
   useEffect(() => {
     const fetchHistoricalChart = async () => {
-      const ohlcData = formatOhlcChartData(
-        await getHistoricalChart("day", {
+      setLoading(true);
+      setError(false);
+      try {
+        const data = await getHistoricalChart("day", {
           fsym: "BTC",
           tsym: "USD",
           limit: 30,
-        })
-      );
+        });
 
-      setOhlcData(ohlcData);
+        setOhlcData(formatOhlcChartData(data));
+      } catch {
+        setError(true);
+      } finally {
+        setLoading(false);
+      }
     };
 
     fetchHistoricalChart();
   }, []);
 
-  return ohlcData;
+  return { ohlcData, loading, error };
 };

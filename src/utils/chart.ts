@@ -13,10 +13,14 @@ export const formatOhlcChartData = (data: OhlcItem[]) => {
 export const getLineChartData = (ohlcData: OhlcChartData, type: OhlcType) => {
   if (!ohlcData.length) return [];
 
-  const initialData: LineChartData = ohlcData.map((item) => ({
-    x: item.x,
-    y: null,
-  }));
+  const lastOhlcItem = ohlcData[ohlcData.length - 1];
+
+  const data: LineChartData = [
+    {
+      x: lastOhlcItem.x,
+      y: lastOhlcItem.y[3],
+    },
+  ];
 
   const arima = new Arima({ verbose: false });
   arima.train(ohlcData.map((item) => item.y[3]));
@@ -24,12 +28,33 @@ export const getLineChartData = (ohlcData: OhlcChartData, type: OhlcType) => {
   const [forecast] = arima.predict(count);
 
   forecast.forEach((number) => {
-    const lastOhlcItem = initialData[initialData.length - 1];
-    initialData.push({
-      x: dayjs(lastOhlcItem.x).add(1, type).toDate(),
+    const lastItem = data[data.length - 1];
+    data.push({
+      x: dayjs(lastItem.x).add(1, type).toDate(),
       y: number,
     });
   });
 
-  return initialData;
+  return data;
+};
+
+export const getProfitChartData = (
+  ohlcData: OhlcChartData,
+  lineData: LineChartData
+) => {
+  const lastOhlcItem = ohlcData[ohlcData.length - 1];
+
+  const maxLineItem = lineData.reduce((acc, el) => {
+    return el.y > acc.y ? el : acc;
+  }, lineData[0]);
+
+  if (maxLineItem.y < lastOhlcItem.y[3]) return [];
+
+  return [
+    {
+      x: lastOhlcItem.x,
+      y: lastOhlcItem.y[3],
+    },
+    maxLineItem,
+  ];
 };

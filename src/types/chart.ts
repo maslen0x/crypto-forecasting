@@ -5,5 +5,5 @@ export type OhlcChartData = {
 
 export type LineChartData = {
   x: Date;
-  y: number | null;
+  y: number;
 }[];

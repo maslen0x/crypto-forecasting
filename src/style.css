@@ -1,11 +1,19 @@
+* {
+  box-sizing: border-box;
+}
+
 body {
   overflow-x: hidden;
 }
 
 .app {
+  width: 100%;
   padding: 24px;
 }
 
-.select {
-  min-width: 120px;
+.center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 200px;
 }

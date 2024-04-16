@@ -1,12 +1,12 @@
-export type HistoricalChartType = "day" | "hour" | "minute";
+export type OhlcType = "day" | "hour" | "minute";
 
-export interface HistoricalChartParams {
+export interface OhlcParams {
   fsym: string;
   tsym: string;
   limit: number;
 }
 
-export interface HistoricalChartItem {
+export interface OhlcItem {
   open: number;
   high: number;
   low: number;
@@ -14,8 +14,26 @@ export interface HistoricalChartItem {
   time: number;
 }
 
-export interface HistoricalChartResponse {
+export interface OhlcResponse {
   Data: {
-    Data: HistoricalChartItem[];
+    Data: OhlcItem[];
   };
+}
+
+export interface CurrenciesParams {
+  tsym: string;
+  limit: number;
+}
+
+export interface Currency {
+  CoinInfo: {
+    Id: string;
+    Name: string;
+    FullName: string;
+    ImageUrl: string;
+  };
+}
+
+export interface CurrenciesResponse {
+  Data: Currency[];
 }

@@ -1,16 +1,22 @@
 import { api } from "../core/api";
 import {
-  HistoricalChartParams,
-  HistoricalChartResponse,
-  HistoricalChartType,
+  CurrenciesParams,
+  CurrenciesResponse,
+  OhlcParams,
+  OhlcResponse,
+  OhlcType,
 } from "../types/crypto";
 
-export const getHistoricalChart = async (
-  type: HistoricalChartType,
-  params: HistoricalChartParams
-) => {
-  const res = await api.get<HistoricalChartResponse>(`/histo${type}`, {
+export const getOhlc = async (type: OhlcType, params: OhlcParams) => {
+  const res = await api.get<OhlcResponse>(`/data/v2/histo${type}`, {
     params,
   });
   return res.data.Data.Data;
+};
+
+export const getCurrencies = async (params: CurrenciesParams) => {
+  const res = await api.get<CurrenciesResponse>("/data/top/mktcapfull", {
+    params,
+  });
+  return res.data.Data;
 };

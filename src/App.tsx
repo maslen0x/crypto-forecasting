@@ -1,25 +1,31 @@
-import { FC, useMemo } from "react";
+import { FC } from "react";
+import { Space } from "antd";
+import CurrenciesFilters from "./components/CurrenciesFilters";
 import OhlcChart from "./components/OhlcChart";
-import { useOhlcData } from "./hooks/ohlc-data";
 import { getLineChartData } from "./utils/chart";
+import { useOhlcData } from "./hooks/ohlc-data";
+import { useFilters } from "./hooks/filters";
 
 const App: FC = () => {
-  const { ohlcData, loading, error } = useOhlcData();
+  const { currency, type } = useFilters();
+  const { ohlcData, isLoading, isError } = useOhlcData(currency, type);
 
-  const lineData = useMemo(() => getLineChartData(ohlcData), [ohlcData]);
+  const lineData = getLineChartData(ohlcData, type);
 
-  if (error) {
+  if (isError) {
     return "Ошибка при загрузке данных";
   }
 
-  if (loading) {
+  if (isLoading) {
     return "Загрузка";
   }
 
   return (
-    <div style={{ display: "flex", justifyContent: "center" }}>
+    <Space className="app" direction="vertical" size="middle">
+      <CurrenciesFilters />
+
       <OhlcChart lineData={lineData} ohlcData={ohlcData} />
-    </div>
+    </Space>
   );
 };
 

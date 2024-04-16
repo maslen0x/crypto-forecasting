@@ -1,0 +1,11 @@
+body {
+  overflow-x: hidden;
+}
+
+.app {
+  padding: 24px;
+}
+
+.select {
+  min-width: 120px;
+}

@@ -1,34 +1,20 @@
-import { useEffect, useState } from "react";
-import { OhlcChartData } from "../types/chart";
+import { useQuery } from "@tanstack/react-query";
 import { formatOhlcChartData } from "../utils/chart";
-import { getHistoricalChart } from "../api/crypto";
+import { getOhlc } from "../api/crypto";
+import { OhlcType } from "../types/crypto";
 
-export const useOhlcData = () => {
-  const [ohlcData, setOhlcData] = useState<OhlcChartData>([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(false);
+export const useOhlcData = (currency: string, type: OhlcType) => {
+  const { data: ohlcData = [], ...rest } = useQuery({
+    queryKey: ["ohlc", currency, type],
+    queryFn: async () => {
+      const data = await getOhlc(type, {
+        fsym: currency,
+        tsym: "USD",
+        limit: 30,
+      });
+      return formatOhlcChartData(data);
+    },
+  });
 
-  useEffect(() => {
-    const fetchHistoricalChart = async () => {
-      setLoading(true);
-      setError(false);
-      try {
-        const data = await getHistoricalChart("day", {
-          fsym: "BTC",
-          tsym: "USD",
-          limit: 30,
-        });
-
-        setOhlcData(formatOhlcChartData(data));
-      } catch {
-        setError(true);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchHistoricalChart();
-  }, []);
-
-  return { ohlcData, loading, error };
+  return { ...rest, ohlcData };
 };

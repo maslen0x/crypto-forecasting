@@ -1,7 +1,7 @@
 import { FC } from "react";
 import Chart from "react-apexcharts";
 import { ApexOptions } from "apexcharts";
-import { useWindowWidth } from "../hooks/window-width";
+import { useWindowSize } from "../hooks/window-size";
 import { LineChartData, OhlcChartData } from "../types/chart";
 
 const options: ApexOptions = {
@@ -26,7 +26,7 @@ interface OhlcChartProps {
 }
 
 const OhlcChart: FC<OhlcChartProps> = ({ lineData, ohlcData }) => {
-  const width = useWindowWidth(0.9);
+  const { width, height } = useWindowSize();
 
   return (
     <Chart
@@ -44,7 +44,8 @@ const OhlcChart: FC<OhlcChartProps> = ({ lineData, ohlcData }) => {
         },
       ]}
       type="candlestick"
-      width={width}
+      width={width - 48}
+      height={height - 120}
     />
   );
 };

@@ -1,13 +1,17 @@
 import { FC, useMemo } from "react";
-import { Result, Space, Spin } from "antd";
+import { Col, Result, Row, Space, Spin } from "antd";
 import CurrenciesFilters from "./components/CurrenciesFilters";
 import OhlcChart from "./components/OhlcChart";
-import { getLineChartData } from "./utils/chart";
+import { getLineChartData, getProfitChartData } from "./utils/chart";
 import { useOhlcData } from "./hooks/ohlc-data";
 import { useFilters } from "./hooks/filters";
+import { useWindowSize } from "./hooks/window-size";
+import ProfitCalculator from "./components/ProfitCalculator";
 
 const App: FC = () => {
   const { currency, type } = useFilters();
+  const { width, height } = useWindowSize();
+
   const { ohlcData, isLoading, isSuccess, isError } = useOhlcData(
     currency,
     type
@@ -17,8 +21,12 @@ const App: FC = () => {
     return getLineChartData(ohlcData, type);
   }, [ohlcData, type]);
 
+  const profitData = useMemo(() => {
+    return getProfitChartData(ohlcData, lineData);
+  }, [ohlcData, lineData]);
+
   return (
-    <Space className="app" direction="vertical" size="middle">
+    <Space className="app full-width" direction="vertical" size="middle">
       <CurrenciesFilters />
 
       {isLoading && (
@@ -35,7 +43,26 @@ const App: FC = () => {
         />
       )}
 
-      {isSuccess && <OhlcChart ohlcData={ohlcData} lineData={lineData} />}
+      {isSuccess && (
+        <Row className="full-width" gutter={24} wrap={false}>
+          <Col>
+            <OhlcChart
+              ohlcData={ohlcData}
+              lineData={lineData}
+              profitData={profitData}
+              width={width - 500}
+              height={height - 120}
+            />
+          </Col>
+
+          <Col flex="1 1 auto">
+            <ProfitCalculator
+              current={ohlcData[ohlcData.length - 1]}
+              forecast={profitData[profitData.length - 1]}
+            />
+          </Col>
+        </Row>
+      )}
     </Space>
   );
 };

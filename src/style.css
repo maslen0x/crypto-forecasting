@@ -7,8 +7,15 @@ body {
 }
 
 .app {
-  width: 100%;
   padding: 24px;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.no-margin {
+  margin: 0 !important;
 }
 
 .center {

@@ -2,6 +2,7 @@ import Arima from "arima";
 import dayjs from "dayjs";
 import { LineChartData, OhlcChartData } from "../types/chart";
 import { OhlcItem, OhlcType } from "../types/crypto";
+import { getDigitsCount } from "./numbers";
 
 export const formatOhlcChartData = (data: OhlcItem[]) => {
   return data.map<OhlcChartData[number]>((item) => ({
@@ -27,7 +28,7 @@ export const getLineChartData = (ohlcData: OhlcChartData, type: OhlcType) => {
   const count = Math.round(ohlcData.length / 3);
   const [forecast] = arima.predict(count);
 
-  const digitsCount = lastOhlcItem.y[3].toString().split(".")[1].length;
+  const digitsCount = getDigitsCount(lastOhlcItem.y[3]);
 
   forecast.forEach((number) => {
     const lastItem = data[data.length - 1];
@@ -44,6 +45,8 @@ export const getProfitChartData = (
   ohlcData: OhlcChartData,
   lineData: LineChartData
 ) => {
+  if (!ohlcData.length || !lineData.length) return [];
+
   const lastOhlcItem = ohlcData[ohlcData.length - 1];
 
   const maxLineItem = lineData.reduce((acc, el) => {

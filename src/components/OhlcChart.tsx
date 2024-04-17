@@ -1,10 +1,8 @@
-import { FC, useMemo } from "react";
-import Chart from "react-apexcharts";
+import { FC } from "react";
+import Chart, { Props as ChartProps } from "react-apexcharts";
 import { ApexOptions } from "apexcharts";
 import ru from "apexcharts/dist/locales/ru.json";
-import { useWindowSize } from "../hooks/window-size";
 import { LineChartData, OhlcChartData } from "../types/chart";
-import { getProfitChartData } from "../utils/chart";
 
 const options: ApexOptions = {
   chart: {
@@ -29,43 +27,40 @@ const options: ApexOptions = {
   },
 };
 
-interface OhlcChartProps {
+interface OhlcChartProps extends ChartProps {
   ohlcData: OhlcChartData;
   lineData: LineChartData;
+  profitData: LineChartData;
 }
 
-const OhlcChart: FC<OhlcChartProps> = ({ ohlcData, lineData }) => {
-  const { width, height } = useWindowSize();
-
-  const profitChartData = useMemo(() => {
-    return getProfitChartData(ohlcData, lineData);
-  }, [ohlcData, lineData]);
-
-  return (
-    <Chart
-      options={options}
-      series={[
-        {
-          name: "OHLC",
-          type: "candlestick",
-          data: ohlcData,
-        },
-        {
-          name: "Прогноз",
-          type: "line",
-          data: lineData,
-        },
-        {
-          name: "Профит",
-          type: "line",
-          data: profitChartData,
-        },
-      ]}
-      type="candlestick"
-      width={width - 48}
-      height={height - 120}
-    />
-  );
-};
+const OhlcChart: FC<OhlcChartProps> = ({
+  ohlcData,
+  lineData,
+  profitData,
+  ...props
+}) => (
+  <Chart
+    {...props}
+    options={options}
+    series={[
+      {
+        name: "OHLC",
+        type: "candlestick",
+        data: ohlcData,
+      },
+      {
+        name: "Прогноз",
+        type: "line",
+        data: lineData,
+      },
+      {
+        name: "Профит",
+        type: "line",
+        data: profitData,
+      },
+    ]}
+    type="candlestick"
+  />
+);
 
 export default OhlcChart;

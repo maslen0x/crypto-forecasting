@@ -27,11 +27,13 @@ export const getLineChartData = (ohlcData: OhlcChartData, type: OhlcType) => {
   const count = Math.round(ohlcData.length / 3);
   const [forecast] = arima.predict(count);
 
+  const digitsCount = lastOhlcItem.y[3].toString().split(".")[1].length;
+
   forecast.forEach((number) => {
     const lastItem = data[data.length - 1];
     data.push({
       x: dayjs(lastItem.x).add(1, type).toDate(),
-      y: number,
+      y: Number(number.toFixed(digitsCount)),
     });
   });
 

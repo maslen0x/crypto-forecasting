@@ -4,6 +4,8 @@ import { getDigitsCount } from "../utils/numbers";
 import { LineChartData, OhlcChartData } from "../types/chart";
 import { formatDate } from "../utils/date";
 import { useUsdCourse } from "../hooks/usd-course";
+import { useFilters } from "../hooks/filters";
+import { useUI } from "../hooks/ui";
 
 interface ProfitCalculatorProps {
   current: OhlcChartData[number];
@@ -19,6 +21,17 @@ const skeletonProps: SkeletonProps = {
 
 const ProfitCalculator: FC<ProfitCalculatorProps> = ({ current, forecast }) => {
   const { usdCourse, isLoading } = useUsdCourse();
+  const { type } = useFilters();
+  const {
+    calculatorRef,
+    buyDateRef,
+    sellDateRef,
+    buyPriceRef,
+    sellPriceRef,
+    usdDifferenceRef,
+    usdCourseRef,
+    rubDifferenceRef,
+  } = useUI();
 
   const difference = useMemo(() => {
     const digitsCount = getDigitsCount(current.y[3]);
@@ -26,34 +39,37 @@ const ProfitCalculator: FC<ProfitCalculatorProps> = ({ current, forecast }) => {
   }, [forecast, current]);
 
   return (
-    <Row gutter={[24, 24]}>
+    <Row ref={calculatorRef} gutter={[24, 24]}>
       <Col span={24}>
         <Typography.Title className="no-margin" level={4}>
           Калькулятор
         </Typography.Title>
       </Col>
 
-      <Col span={12}>
-        <Statistic title="Дата покупки" value={formatDate(current.x)} />
+      <Col ref={buyDateRef} span={12}>
+        <Statistic
+          title="Дата покупки"
+          value={formatDate(current.x, { time: type !== "day" })}
+        />
       </Col>
 
-      <Col span={12}>
+      <Col ref={sellDateRef} span={12}>
         <Statistic title="Дата продажи" value={formatDate(forecast.x)} />
       </Col>
 
-      <Col span={12}>
+      <Col ref={buyPriceRef} span={12}>
         <Statistic title="Стоимость покупки" value={`${current.y[3]}$`} />
       </Col>
 
-      <Col span={12}>
+      <Col ref={sellPriceRef} span={12}>
         <Statistic title="Стоимость продажи" value={`${forecast.y}$`} />
       </Col>
 
-      <Col span={12}>
+      <Col ref={usdDifferenceRef} span={12}>
         <Statistic title="Разница" value={`${difference}$`} />
       </Col>
 
-      <Col span={12}>
+      <Col ref={usdCourseRef} span={12}>
         <Statistic
           title="Курс доллара США"
           value={`${usdCourse.toFixed(2)}₽`}
@@ -63,7 +79,7 @@ const ProfitCalculator: FC<ProfitCalculatorProps> = ({ current, forecast }) => {
         />
       </Col>
 
-      <Col span={12}>
+      <Col ref={rubDifferenceRef} span={12}>
         <Statistic
           title="Разница в рублях"
           value={`${(difference * usdCourse).toFixed(2)}₽`}

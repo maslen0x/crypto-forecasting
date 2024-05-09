@@ -9,6 +9,9 @@ const options: ApexOptions = {
     id: "ohlc-chart",
     locales: [ru],
     defaultLocale: "ru",
+    toolbar: {
+      show: false,
+    },
   },
   plotOptions: {
     candlestick: {
@@ -24,6 +27,9 @@ const options: ApexOptions = {
     curve: ["smooth", "smooth", "straight"],
     colors: ["#1677ff", "#1677ff", "#52c41a"],
     width: 2,
+  },
+  legend: {
+    show: false,
   },
 };
 
